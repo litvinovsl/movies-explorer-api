@@ -2,7 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
-const { createUser } = require('./controllers/user');
+const { createUser, login } = require('./controllers/user');
+const usersRouter = require('./routes/user');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -19,7 +21,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/signup', createUser);
-// app.post('/signin', login);
+app.post('/signin', login);
+
+app.use('/', auth, usersRouter);
 
 app.use(errors());
 app.use((err, req, res, next) => {
