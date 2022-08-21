@@ -1,22 +1,18 @@
 const bcrypt = require('bcrypt');
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-module.exports.getUser = (req, res, next) => {
-  User.findById(req.params.userId)
+module.exports.getUserMe = (req, res, next) => {
+  User.findById(req.user._id)
     .then((user) => {
-      if (!user) {
-        res.status(404).send('Нет пользователя с таким id');
-        // throw new NotFoundError('Нет пользователя с таким id');
-      }
-      res.status(200).send(user);
+      res.status(200).send({ data: user });
     })
     .catch(next);
 };
 
 module.exports.updateUser = (req, res, next) => {
-  const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+  const { name } = req.body;
+  User.findByIdAndUpdate(req.user._id, { name }, { new: true, runValidators: true })
     .then((user) => {
       res.status(200).send(user);
     })
@@ -60,6 +56,18 @@ module.exports.createUser = (req, res, next) => {
         return;
       }
       next(err);
+    })
+    .catch(next);
+};
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+
+      res.status(200).send({ token });
     })
     .catch(next);
 };
