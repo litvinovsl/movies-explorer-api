@@ -1,0 +1,22 @@
+{
+  "name": "movie-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/litvinovsl/movies-explorer-api.git"
+  },
+  "author": "Litvinov Sergey",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/litvinovsl/movies-explorer-api/issues"
+  },
+  "homepage": "https://github.com/litvinovsl/movies-explorer-api#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
