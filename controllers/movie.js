@@ -2,6 +2,15 @@ const Movie = require('../models/movie');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ForbiddenError = require('../errors/forbidden-err');
+const {
+  badRequestMessage,
+  movieNotFoundMessage,
+  moviesNotFoundMessage,
+  forbiddenErrMessage,
+  deleteMovieMessage,
+  validateErr,
+  castErr,
+} = require('../utils/constant');
 
 module.exports.postMovie = (req, res, next) => {
   const {
@@ -28,32 +37,29 @@ module.exports.postMovie = (req, res, next) => {
   })
     .then((movie) => res.status(201).send(movie))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError(`Ошибка валидации: ${err.message}`));
+      if (err.name === validateErr) {
+        next(new BadRequestError(`${badRequestMessage}: ${err.message}`));
         return;
       }
-      console.log('tyt');
       next(err);
     });
 };
 
 module.exports.deleteMovie = (req, res, next) => {
-  console.log('movie remove');
-
   Movie.findById(req.params._id)
     .then((movie) => {
       if (!movie) {
-        throw new NotFoundError('У вас нет такого фильма');
+        throw new NotFoundError(movieNotFoundMessage);
       }
       if (JSON.stringify(movie.owner) !== JSON.stringify(req.user._id)) {
-        throw new ForbiddenError('Недостаточно прав для удаления фильма');
+        throw new ForbiddenError(forbiddenErrMessage);
       }
       return Movie.remove(movie);
     })
-    .then(() => res.status(200).send({ message: 'Карточка удалена' }))
+    .then(() => res.status(200).send({ message: deleteMovieMessage }))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('У вас нет такого фильма'));
+      if (err.name === castErr) {
+        next(new BadRequestError(movieNotFoundMessage));
         return;
       }
       next(err);
@@ -61,12 +67,11 @@ module.exports.deleteMovie = (req, res, next) => {
 };
 
 module.exports.getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movies) => res.status(200).send(movies))
     .catch((err) => {
-      if (err.name === 'CastError') {
-
-        // throw new NotFoundError('Нет сохраненных фильмов');
+      if (err.name === castErr) {
+        throw new NotFoundError(moviesNotFoundMessage);
       }
       next(err);
     });
