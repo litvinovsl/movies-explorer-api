@@ -1,4 +1,7 @@
 const Movie = require('../models/movie');
+const NotFoundError = require('../errors/not-found-err');
+const BadRequestError = require('../errors/bad-request-err');
+const ForbiddenError = require('../errors/forbidden-err');
 
 module.exports.postMovie = (req, res, next) => {
   const {
@@ -26,8 +29,7 @@ module.exports.postMovie = (req, res, next) => {
     .then((movie) => res.status(201).send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        console.log(err.message);
-        // next(new BadRequestError('Ошибка валидации'));
+        next(new BadRequestError(`Ошибка валидации: ${err.message}`));
         return;
       }
       console.log('tyt');
@@ -41,19 +43,17 @@ module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(req.params._id)
     .then((movie) => {
       if (!movie) {
-        console.log('!movie');
-        // throw new NotFoundError('У вас нет такого фильма');
+        throw new NotFoundError('У вас нет такого фильма');
       }
       if (JSON.stringify(movie.owner) !== JSON.stringify(req.user._id)) {
-        console.log('Недостаточно прав для удаления карточки');
-        // throw new ForbiddenError('Недостаточно прав для удаления фильма');
+        throw new ForbiddenError('Недостаточно прав для удаления фильма');
       }
       return Movie.remove(movie);
     })
     .then(() => res.status(200).send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        // next(new BadRequestError('У вас нет такого фильма'));
+        next(new BadRequestError('У вас нет такого фильма'));
         return;
       }
       next(err);
