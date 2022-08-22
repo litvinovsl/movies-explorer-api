@@ -4,6 +4,7 @@ const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
 const { createUser, login } = require('./controllers/user');
 const usersRouter = require('./routes/user');
+const moviesRouter = require('./routes/movie');
 const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
@@ -24,6 +25,7 @@ app.post('/signup', createUser);
 app.post('/signin', login);
 
 app.use('/', auth, usersRouter);
+app.use('/', auth, moviesRouter);
 
 app.use(errors());
 app.use((err, req, res, next) => {
