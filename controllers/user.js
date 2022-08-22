@@ -1,6 +1,15 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const BadRequestError = require('../errors/bad-request-err');
+const ConflictError = require('../errors/conflict-err');
+
+const {
+  badRequestMessage,
+  validateErr,
+  emailIsBusyMessage,
+  secret,
+} = require('../utils/constant');
 
 module.exports.getUserMe = (req, res, next) => {
   User.findById(req.user._id)
@@ -17,9 +26,8 @@ module.exports.updateUser = (req, res, next) => {
       res.status(200).send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(403).send('Ошибка валидации');
-        // next(new BadRequestError('Ошибка валидации'));
+      if (err.name === validateErr) {
+        next(new BadRequestError(badRequestMessage));
         return;
       }
       next(err);
@@ -45,14 +53,12 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        res.status(401).send('Email занят');
-        // next(new ConflictError('Email занят'));
+        next(new ConflictError(emailIsBusyMessage));
         return;
       }
 
-      if (err.name === 'ValidationError') {
-        res.status(403).send('Ошибка валидации');
-        // next(new BadRequestError('Ошибка валидации'));
+      if (err.name === validateErr) {
+        next(new BadRequestError(badRequestMessage));
         return;
       }
       next(err);
@@ -65,7 +71,7 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, secret, { expiresIn: '7d' });
 
       res.status(200).send({ token });
     })
