@@ -42,19 +42,31 @@ module.exports.deleteMovie = (req, res, next) => {
     .then((movie) => {
       if (!movie) {
         console.log('!movie');
-        // throw new NotFoundError('Карточки не существует');
+        // throw new NotFoundError('У вас нет такого фильма');
       }
       if (JSON.stringify(movie.owner) !== JSON.stringify(req.user._id)) {
         console.log('Недостаточно прав для удаления карточки');
-        // throw new ForbiddenError('Недостаточно прав для удаления карточки');
+        // throw new ForbiddenError('Недостаточно прав для удаления фильма');
       }
       return Movie.remove(movie);
     })
     .then(() => res.status(200).send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        // next(new BadRequestError('Карточки не существует'));
+        // next(new BadRequestError('У вас нет такого фильма'));
         return;
+      }
+      next(err);
+    });
+};
+
+module.exports.getMovies = (req, res, next) => {
+  Movie.find({})
+    .then((movies) => res.status(200).send(movies))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+
+        // throw new NotFoundError('Нет сохраненных фильмов');
       }
       next(err);
     });
