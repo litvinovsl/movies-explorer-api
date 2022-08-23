@@ -7,6 +7,7 @@ const { createUser, login } = require('./controllers/user');
 const usersRouter = require('./routes/user');
 const moviesRouter = require('./routes/movie');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -22,11 +23,15 @@ const main = async () => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(requestLogger);
+
 app.post('/signup', createUser);
 app.post('/signin', login);
 
 app.use('/', auth, usersRouter);
 app.use('/', auth, moviesRouter);
+
+app.use(errorLogger);
 
 app.use(errors());
 app.use((err, req, res, next) => {
@@ -37,7 +42,7 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
-  // console.log(`App listening on port ${PORT}`);
+  console.log(`App listening on port ${PORT}`);
 });
 
 main();
