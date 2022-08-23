@@ -12,10 +12,10 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const secret = NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret';
 
 const allowedCors = [
-  'https://api.litvinovsl.nomoredomains.sbs',
-  'http://api.litvinovsl.nomoredomains.sbs',
-  'http://litvinovsl.nomoredomains.sbs',
-  'https://litvinovsl.nomoredomains.sbs',
+  'https://api.movie.search.nomoredomains.sbs',
+  'http://api.movie.search.nomoredomains.sbs',
+  'http://movie.search.nomoredomains.sbs',
+  'https://movie.search.nomoredomains.sbs',
   'http://localhost:3000',
 ];
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
