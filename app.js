@@ -6,8 +6,10 @@ const bodyParser = require('body-parser');
 const { createUser, login } = require('./controllers/user');
 const usersRouter = require('./routes/user');
 const moviesRouter = require('./routes/movie');
+const errorRouter = require('./routes/error');
 const auth = require('./middlewares/auth');
 const cors = require('./middlewares/cors');
+const { errorsCentr } = require('./middlewares/errorsCentr');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const {
   validatorCreateUser,
@@ -28,26 +30,21 @@ const main = async () => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(cors);
 app.use(requestLogger);
+app.use(cors);
 
 app.post('/signup', validatorCreateUser, createUser);
 app.post('/signin', validatorLogin, login);
-
 app.use('/', auth, usersRouter);
 app.use('/', auth, moviesRouter);
+app.use('*', auth, errorRouter);
 
 app.use(errorLogger);
 
 app.use(errors());
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
-  next();
-});
+app.use(errorsCentr);
 
 app.listen(PORT, () => {
-  // Если всё работает, консоль покажет, какой порт приложение слушает
   console.log(`App listening on port ${PORT}`);
 });
 
