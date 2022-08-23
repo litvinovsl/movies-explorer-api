@@ -9,6 +9,10 @@ const moviesRouter = require('./routes/movie');
 const auth = require('./middlewares/auth');
 const cors = require('./middlewares/cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const {
+  validatorCreateUser,
+  validatorLogin,
+} = require('./middlewares/validator');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -27,8 +31,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors);
 app.use(requestLogger);
 
-app.post('/signup', createUser);
-app.post('/signin', login);
+app.post('/signup', validatorCreateUser, createUser);
+app.post('/signin', validatorLogin, login);
 
 app.use('/', auth, usersRouter);
 app.use('/', auth, moviesRouter);
