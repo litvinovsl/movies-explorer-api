@@ -7,6 +7,7 @@ const { createUser, login } = require('./controllers/user');
 const usersRouter = require('./routes/user');
 const moviesRouter = require('./routes/movie');
 const auth = require('./middlewares/auth');
+const cors = require('./middlewares/cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
@@ -23,6 +24,7 @@ const main = async () => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(cors);
 app.use(requestLogger);
 
 app.post('/signup', createUser);
