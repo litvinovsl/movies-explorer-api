@@ -4,16 +4,15 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
 const router = require('./routes/index');
-
+const { dataMovies, PORT } = require('./utils/config');
 const cors = require('./middlewares/cors');
 const { errorsCentr } = require('./middlewares/errorsCentr');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000 } = process.env;
 const app = express();
 
 const main = async () => {
-  await mongoose.connect('mongodb://localhost:27017/moviesdb', {
+  await mongoose.connect(dataMovies, {
     useNewUrlParser: true,
   })
     .then(() => { console.log('Установлено соединение с БД!'); })
