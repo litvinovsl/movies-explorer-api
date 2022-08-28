@@ -5,6 +5,7 @@ const forbiddenErrMessage = 'Недостаточно прав для удале
 const deleteMovieMessage = 'Фильм успешно удален';
 const validateErr = 'ValidationError';
 const castErr = 'CastError';
+const mongoServerError = 'MongoServerError';
 const emailIsBusyMessage = 'Пользователь с данным Email уже зарегистрирован';
 const unauthorizedMessage = 'Необходима авторизация';
 
@@ -28,6 +29,7 @@ module.exports = {
   deleteMovieMessage,
   validateErr,
   castErr,
+  mongoServerError,
   emailIsBusyMessage,
   unauthorizedMessage,
   secret,

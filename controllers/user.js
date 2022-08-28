@@ -5,6 +5,7 @@ const BadRequestError = require('../errors/bad-request-err');
 const ConflictError = require('../errors/conflict-err');
 
 const {
+  mongoServerError,
   badRequestMessage,
   validateErr,
   emailIsBusyMessage,
@@ -26,6 +27,10 @@ module.exports.updateUser = (req, res, next) => {
       res.status(201).send(user);
     })
     .catch((err) => {
+      if (err.name === mongoServerError) {
+        next(new ConflictError(emailIsBusyMessage));
+        return;
+      }
       if (err.name === validateErr) {
         next(new BadRequestError(badRequestMessage));
         return;
