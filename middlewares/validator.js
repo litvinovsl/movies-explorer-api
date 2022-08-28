@@ -17,8 +17,8 @@ module.exports.validatorCreateUser = celebrate({
 
 module.exports.valdatorUpdateProfile = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    email: Joi.string().email(),
+    name: Joi.string().min(2).max(30).required(),
+    email: Joi.string().email().required(),
   }),
 });
 
@@ -30,10 +30,10 @@ module.exports.validatorMovieId = celebrate({
 
 module.exports.validatorCreateMovie = celebrate({
   body: Joi.object().keys({
-    country: Joi.string().required().min(2).max(20),
-    director: Joi.string().required().min(2).max(20),
+    country: Joi.string().required(),
+    director: Joi.string().required(),
     duration: Joi.number().required(),
-    year: Joi.string().required().min(2).max(10),
+    year: Joi.string().required(),
     description: Joi.string().required(),
     image: Joi.string().required().regex(/^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/),
     trailerLink: Joi.string().required().regex(/^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/),
