@@ -5,7 +5,6 @@ const ForbiddenError = require('../errors/forbidden-err');
 const {
   badRequestMessage,
   movieNotFoundMessage,
-  moviesNotFoundMessage,
   forbiddenErrMessage,
   deleteMovieMessage,
   validateErr,
@@ -68,11 +67,6 @@ module.exports.deleteMovie = (req, res, next) => {
 
 module.exports.getMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
-    .then((movies) => res.status(200).send(movies))
-    .catch((err) => {
-      if (err.name === castErr) {
-        throw new NotFoundError(moviesNotFoundMessage);
-      }
-      next(err);
-    });
+    .then((movies) => res.send(movies))
+    .catch(next);
 };
