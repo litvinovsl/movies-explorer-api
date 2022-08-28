@@ -3,18 +3,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
-const { createUser, login } = require('./controllers/user');
-const usersRouter = require('./routes/user');
-const moviesRouter = require('./routes/movie');
-const errorRouter = require('./routes/error');
-const auth = require('./middlewares/auth');
+const router = require('./routes/index');
+
 const cors = require('./middlewares/cors');
 const { errorsCentr } = require('./middlewares/errorsCentr');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const {
-  validatorCreateUser,
-  validatorLogin,
-} = require('./middlewares/validator');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -33,11 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);
 app.use(cors);
 
-app.post('/signup', validatorCreateUser, createUser);
-app.post('/signin', validatorLogin, login);
-app.use('/', auth, usersRouter);
-app.use('/', auth, moviesRouter);
-app.use('*', auth, errorRouter);
+app.use(router);
 
 app.use(errorLogger);
 
