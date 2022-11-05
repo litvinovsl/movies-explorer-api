@@ -1,10 +1,17 @@
-# movies-explorer-api
+# Проект Movie-explorer
 
-## Публичный IPv4:
-51.250.79.208
+В данной работе реализована Бэкэнд часть с использованием фреймворка Express.js. Данная работа используется вместе с https://github.com/litvinovsl/movies-explorer-frontend
 
-## Домен API:
-https://api.movie.search.nomoredomains.sbs//
+## Функционал:
+авторизация и регистрация пользователей, добавление/удаление фильмов в избранное, редактирование профиля.
+
+## Технологии:
+- JS, 
+- Git,
+- Node.js, 
+- Express.js,
+- REST,
+- MongoDB.
 
 ## Директории
 
